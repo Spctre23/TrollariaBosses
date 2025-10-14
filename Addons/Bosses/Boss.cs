@@ -89,25 +89,6 @@ namespace TrollariaAddons.Addons.Bosses
             orig(npc);
         }
 
-        private double Player_Hurt(On.Terraria.Player.orig_Hurt orig, Player self, PlayerDeathReason damageSource, int damage, int hitDirection, bool pvp, bool quiet, bool crit, int cooldownCounter, bool dodgeable)
-        {
-
-            int npcIndex = damageSource._sourceNPCIndex;
-            if (npcIndex < Main.maxNPCs)
-            {
-                NPC npc = Main.npc[npcIndex];
-                if (npc.active && npc.type == NPCID.Retinazer && boss1_alive)
-                {
-                    damage *= 1000;
-                    TShock.Utils.Broadcast($"{damage}", bossMessageColor);
-
-                    //damage = 555;
-                }
-            }
-
-            return orig(self, damageSource, damage, hitDirection, pvp, quiet, crit, cooldownCounter, dodgeable);
-        }
-
         public void ChatHelper_BroadcastChatMessage(On.Terraria.Chat.ChatHelper.orig_BroadcastChatMessage orig, NetworkText text, Color color, int excludedPlayer)
         {
             if (boss1_alive)
@@ -220,36 +201,17 @@ namespace TrollariaAddons.Addons.Bosses
             NetMessage.PlayNetSound(new NetSoundInfo(pos, id, style, volume, pitch), -1, -1);
         }
 
-        public void SetVelocity(NPC npc, Player player, float minSpeed, float maxSpeed, float decelRange, float stopRadius, float smoothness)
+        public void SetVelocity(NPC npc, Player player, float speed, float decelRange)
         {
-            /*            Vector2 toTarget = player.Center - npc.Center;
-                        float playerDistance = toTarget.Length();
-
-                        // dead zone so it doesn't orbit forever
-                        if (playerDistance <= stopRadius) { npc.velocity = Vector2.Zero; return; }
-
-                        Vector2 direction = toTarget / (playerDistance + 1e-6f);
-
-                        // ease-in as we get close
-                        float speed = (playerDistance >= decelRange)
-                            ? maxSpeed
-                            : MathHelper.Lerp(minSpeed, maxSpeed, playerDistance / decelRange);
-
-                        Vector2 desired = direction * speed;
-
-                        // a bit snappier when very close
-                        float alpha = playerDistance < 32f ? 0.5f : smoothness;   // <-- fixed here
-                        npc.velocity = Vector2.Lerp(npc.velocity, desired, MathHelper.Clamp(alpha, 0f, 1f));*/
-
             Vector2 direction = player.Center - npc.Center;
             float playerDistance = direction.Length();
 
             if (playerDistance <= decelRange)
             {
-                maxSpeed *= playerDistance / decelRange;
+                speed *= playerDistance / decelRange;
             }
 
-            Vector2 velocity = Vector2.Normalize(direction) * maxSpeed;
+            Vector2 velocity = Vector2.Normalize(direction) * speed;
             npc.velocity = velocity;
         }
     }

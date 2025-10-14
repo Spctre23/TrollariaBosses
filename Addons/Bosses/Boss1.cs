@@ -22,7 +22,7 @@ namespace TrollariaAddons.Addons.Bosses
             int target = Player.FindClosest(boss.Center, boss.width, boss.height);
             player = Main.player[target];
 
-            SetVelocity(boss, player, 2.5f, 13, 200, 12, 0.25f);
+            SetVelocity(boss, player, 13, 200);
 
             Vector2 projDir = player.Center - boss.Center;
             if (projDir.LengthSquared() > 1f) 
@@ -94,7 +94,7 @@ namespace TrollariaAddons.Addons.Bosses
         {
             if (player == null) return;
 
-            SetVelocity(primeMinion, player, 2.5f, 14, 200, 12, 0.25f);
+            SetVelocity(primeMinion, player, 14, 200);
 
             primeMinion.netUpdate = true;
             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, primeMinion.whoAmI);
