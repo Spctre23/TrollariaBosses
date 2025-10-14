@@ -167,6 +167,7 @@ namespace TrollariaAddons.Addons.Bosses
             float step = 0;
             float start = 0;
             float speed = 0;
+
             if (velocity.Length() > 0)
             {
                 speed = velocity.Length();
