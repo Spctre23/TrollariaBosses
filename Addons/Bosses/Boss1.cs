@@ -24,9 +24,7 @@ namespace TrollariaAddons.Addons.Bosses
 
             SetVelocity(boss, player, 13, 200);
 
-            Vector2 projDir = player.Center - boss.Center;
-            if (projDir.LengthSquared() > 1f) 
-                projDir.Normalize();
+            Vector2 projDir = Vector2.Normalize(player.Center - boss.Center);
 
             boss.localAI[0]++;
 

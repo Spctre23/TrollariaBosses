@@ -41,11 +41,11 @@ namespace TrollariaAddons.Addons.Bosses
             Boss2
         }
 
-        public void NPC_AI(On.Terraria.NPC.orig_AI original_AI, NPC npc)
+        public void NPC_AI(On.Terraria.NPC.orig_AI orig, NPC npc)
         {
             if (!npc.active)
             {
-                original_AI(npc);
+                orig(npc);
                 return;
             }
 
@@ -77,37 +77,52 @@ namespace TrollariaAddons.Addons.Bosses
                 }
             }
 
-            original_AI(npc);
+            orig(npc);
         }
 
         private void NPC_checkDead(On.Terraria.NPC.orig_checkDead orig, NPC npc)
         {
-            if (npc.life <= 0 && npc.type == NPCID.Retinazer && boss1_alive)
+            if (npc.life <= 0)          
             {
-                boss1.ClearMinions();
+                if (npc.type == NPCID.Retinazer && boss1_alive)
+                {
+                    boss1.ClearMinions();
+                }
             }
+
             orig(npc);
         }
 
-        public void ChatHelper_BroadcastChatMessage(On.Terraria.Chat.ChatHelper.orig_BroadcastChatMessage orig, NetworkText text, Color color, int excludedPlayer)
+        private void ChatHelper_BroadcastChatMessage(On.Terraria.Chat.ChatHelper.orig_BroadcastChatMessage orig, NetworkText text, Color color, int excludedPlayer)
         {
+            string msg = text.ToString();
+
             if (boss1_alive)
             {
-                if (text.ToString().Contains("The Twins"))
+                if (msg.Contains("The Twins") || msg.Contains("Retinazer"))
                 {
-                    text._text = $"{BossType.Boss1} has been defeated!";
+                    string status = GetBossStatus(msg);
+                    text._text = $"{BossType.Boss1} {status}";
+
                     boss1_alive = false;
                 }
-                else if (text.ToString().Contains("Skeletron Prime")) return;
+                else if (msg.Contains("Skeletron Prime")) return;
             }
 
-            if (text.ToString().Contains("Skeletron Prime") && boss2_alive)
+            if (msg.Contains("Skeletron Prime") && boss2_alive)
             {
-                text._text = $"{BossType.Boss2} has been defeated!";
+                string status = GetBossStatus(msg);
+                text._text = $"{BossType.Boss2} {status}";
+
                 boss2_alive = false;
             }
 
             orig(text, color, excludedPlayer);
+        }
+
+        private string GetBossStatus(string msg)
+        {
+            return msg.Contains("awoken") ? "has awoken!" : "has been defeated!";
         }
 
         public void SpawnBoss(Vector2 pos, BossType type, int amount)

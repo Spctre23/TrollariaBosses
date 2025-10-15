@@ -35,9 +35,6 @@ namespace TrollariaAddons
 
         public override void Initialize()
         {
-            Main.maxTilesX = 100000;
-            Main.maxTilesY = 100000;
-
             Handlers.InitializeHandlers(this);
             boss.Initialize();
 
