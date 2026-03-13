@@ -1,9 +1,7 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.Localization;
 using TrollariaAddons.Addons.Helpers;
 using TShockAPI;
 
@@ -13,6 +11,10 @@ namespace TrollariaAddons.Addons.Bosses
     {
         Player? player;
         public int damageMultiplier = 1000;
+        public int bossNpcId = NPCID.Retinazer;
+        public int minionNpcId = NPCID.SkeletronPrime;
+        public bool alive;
+        public bool hasAnnounced;
 
         public void BossAI(NPC boss)
         {

@@ -11,6 +11,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Map;
 using TerrariaApi.Server;
+using TrollariaAddons.Addons;
 using TrollariaAddons.Addons.Bosses;
 using TShockAPI;
 using TShockAPI.Configuration;

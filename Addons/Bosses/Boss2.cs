@@ -18,6 +18,10 @@ namespace TrollariaAddons.Addons.Bosses
     {
         Player? player;
         public int damageMultiplier = 1000;
+        public int bossNpcId = NPCID.SkeletronPrime;
+        public int minionNpcId = NPCID.LunarTowerSolar;
+        public bool alive;
+        public bool hasAnnounced;
 
         public void BossAI(NPC boss)
         {
@@ -27,7 +31,7 @@ namespace TrollariaAddons.Addons.Bosses
             int target = Player.FindClosest(boss.Center, boss.width, boss.height);
             player = Main.player[target];
 
-            SetVelocity(boss, player, 13, 200);
+            SetVelocity(boss, player, 16, 200);
 
             Vector2 projDir = player.Center - boss.Center;
             if (projDir.LengthSquared() > 1f) 
