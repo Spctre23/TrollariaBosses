@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="C:\Users\Evan\.nuget\packages\tshock\6.1.0\contentFiles\any\net9.0\HttpServer.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="TShock" Version="6.1.0" />
   </ItemGroup>
 

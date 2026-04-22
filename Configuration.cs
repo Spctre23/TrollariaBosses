@@ -1,34 +1,32 @@
 using Newtonsoft.Json;
-using Terraria;
 using TShockAPI;
 
-namespace TrollariaAddons
+namespace TrollariaBosses;
+
+public class Configuration
 {
-    public class Configuration
+    public static string ConfigPath = Path.Combine(TShock.SavePath, "trollariaaddons.json");
+
+    public static Configuration Reload()
     {
-        public static string ConfigPath = Path.Combine(TShock.SavePath, "trollariaaddons.json");
+        Configuration? c = null;
 
-        public static Configuration Reload()
+        if (File.Exists(ConfigPath))
         {
-            Configuration? c = null;
+            c = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(ConfigPath));
+        }
 
-            if (File.Exists(ConfigPath))
-            {
-                c = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(ConfigPath));
-            }
-
-            if (c == null)
-            {
-                c = new Configuration();
-                File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(c, Formatting.Indented));
-            }
-            
-            return c;
+        if (c == null)
+        {
+            c = new Configuration();
+            File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(c, Formatting.Indented));
         }
         
-        public void Write()
-        {
-            File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(this, Formatting.Indented));
-        }
+        return c;
+    }
+    
+    public void Write()
+    {
+        File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(this, Formatting.Indented));
     }
 }
