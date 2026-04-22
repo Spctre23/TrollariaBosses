@@ -6,9 +6,9 @@ namespace TrollariaBosses
     [ApiVersion(2, 1)]
     public class TrollariaBosses(Terraria.Main game) : TerrariaPlugin(game)
     {
-        public override string Name => "TrollariaAddons";
+        public override string Name => "TrollariaBosses";
         public override string Author => "Spctre";
-        public override string Description => "Trollaria server addons";
+        public override string Description => "Custom bosses for the Trollaria server";
         public override Version Version => new(1, 0, 0);
         public static TrollariaBosses Instance { get; private set; }
 
@@ -25,7 +25,7 @@ namespace TrollariaBosses
             ChatCommands.RegisterCommands();
 
             Configuration.Reload();                            
-            TShock.Log.ConsoleInfo("======= TrollariaAddons Plugin Initialized =======");
+            TShock.Log.ConsoleInfo("======= TrollariaBosses Plugin Initialized =======");
         }
 
         protected override void Dispose(bool disposing) 

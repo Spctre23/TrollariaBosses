@@ -69,7 +69,7 @@ public class ChatCommands
 
     private void CommandHelp(CommandArgs args)
     {
-        args.Player.SendMessage("TrollariaAddons subcommands:" +
+        args.Player.SendMessage("TrollariaBosses subcommands:" +
             "\n- help" +
             "\n- mechdusa", 255, 255, 0);
     }
@@ -77,6 +77,6 @@ public class ChatCommands
     private void ReloadConfig(CommandArgs args)
     {
         Configuration.Reload();
-        args.Player.SendMessage("Reloaded TrollariaAddons configuration.", 0, 255, 0);
+        args.Player.SendMessage("Reloaded TrollariaBosses configuration.", 0, 255, 0);
     }
 }

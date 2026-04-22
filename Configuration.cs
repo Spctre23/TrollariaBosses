@@ -5,7 +5,7 @@ namespace TrollariaBosses;
 
 public class Configuration
 {
-    public static string ConfigPath = Path.Combine(TShock.SavePath, "trollariaaddons.json");
+    public static string ConfigPath = Path.Combine(TShock.SavePath, "TrollariaBosses.json");
 
     public static Configuration Reload()
     {

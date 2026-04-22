@@ -8,9 +8,9 @@ namespace TrollariaBosses.Boss.Bosses;
 
 public class Boss2 : Boss
 {
-    public Boss2() : base("Boss2", NPCID.SkeletronPrime, NPCID.LunarTowerSolar, 1000, ItemID.Honeyfin, ["Skeletron Prime", "Lunar Tower Solar"]) { }
+    public Boss2() : base("Boss2", NPCID.SkeletronPrime, ["Skeletron Prime", "Lunar Tower Solar"]) { }
 
-    protected override void NPC_AI(NPC boss)
+    protected override void BossAI(NPC boss)
     {
         boss.aiStyle = -1;
         boss.defense = 300;
@@ -19,12 +19,6 @@ public class Boss2 : Boss
         player = Main.player[target];
 
         SetVelocity(boss, player, 16, 200);
-
-        Vector2 projDir = player.Center - boss.Center;
-        if (projDir.LengthSquared() > 1f)
-            projDir = Vector2.Normalize(projDir);
-
-        Vector2 projSpeed = projDir * 9;
 
         boss.localAI[0]++;
 
@@ -37,23 +31,17 @@ public class Boss2 : Boss
                 int minionId = NPC.NewNPC(new EntitySource_Sync(), (int)spawnPos.X, (int)spawnPos.Y, NPCID.LunarTowerSolar);
                 NPC minion = Main.npc[minionId];
                 minion.life = 100;
+
+                minionIds.Add(minionId);
             }
         }
-
-        boss.netUpdate = true;
-        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, boss.whoAmI);
     }
 
     protected override void MinionAI(NPC minion)
     {
-        if (player == null) return;
-
         minion.aiStyle = -1;
 
         Vector2 direction = Vector2.Normalize(player.Center - minion.Center);
         minion.SimpleFlyMovement(direction, 20);
-
-        minion.netUpdate = true;
-        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, minion.whoAmI);
     }
 }

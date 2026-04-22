@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using System.Text;
+﻿using Google.Protobuf.WellKnownTypes;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -10,13 +10,13 @@ using static Terraria.NetMessage;
 
 namespace TrollariaBosses.Boss;
 
-public class Boss(string name, int bossNpcId, int minionNpcId, int damageMultiplier, int summonItem, string[] origBossNames)
+public class Boss(string name, int bossNpcType, string[] namesToReplace)
 {
     private readonly string name = name;
-    private readonly int bossNpcId = bossNpcId;
-    private int bossWhoAmI = -1;
-    private readonly HashSet<int> minionWhoAmIs = [];
-    private readonly string[] origBossNames = origBossNames;
+    private readonly int bossNpcType = bossNpcType;
+    private int bossId = -1;
+    protected HashSet<int> minionIds = [];
+    private readonly string[] namesToReplace = namesToReplace;
     private readonly Color bossMessageColor = new(175, 75, 255);
     private bool alive;
     private bool hasAnnounced;
@@ -26,7 +26,7 @@ public class Boss(string name, int bossNpcId, int minionNpcId, int damageMultipl
 
     public void Initialize()
     {
-        On.Terraria.NPC.AI += BossAI;
+        On.Terraria.NPC.AI += NPC_AI;
         On.Terraria.NPC.CheckActive += NPC_CheckActive;
         On.Terraria.NPC.checkDead += NPC_checkDead;
         On.Terraria.Projectile.NewProjectile_IEntitySource_Vector2_Vector2_int_int_float_int_float_float_float_NewProjectileModifier += Projectile_NewProjectile;
@@ -35,14 +35,14 @@ public class Boss(string name, int bossNpcId, int minionNpcId, int damageMultipl
 
     public void Dispose()
     {
-        On.Terraria.NPC.AI -= BossAI;
+        On.Terraria.NPC.AI -= NPC_AI;
         On.Terraria.NPC.CheckActive -= NPC_CheckActive;
         On.Terraria.NPC.checkDead -= NPC_checkDead;
         On.Terraria.Projectile.NewProjectile_IEntitySource_Vector2_Vector2_int_int_float_int_float_float_float_NewProjectileModifier -= Projectile_NewProjectile;
         On.Terraria.Chat.ChatHelper.BroadcastChatMessage -= ChatHelper_BroadcastChatMessage;
     }
 
-    private void BossAI(On.Terraria.NPC.orig_AI orig, NPC npc)
+    private void NPC_AI(On.Terraria.NPC.orig_AI orig, NPC npc)
     {
         if (!npc.active || !alive)
         {
@@ -50,21 +50,25 @@ public class Boss(string name, int bossNpcId, int minionNpcId, int damageMultipl
             return;
         }
 
-        if (npc.whoAmI == bossWhoAmI)
+        if (npc.whoAmI == bossId)
         {
             int target = Player.FindClosest(npc.Center, npc.width, npc.height);
             player = Main.player[target];
-            NPC_AI(npc);
+            if (player != null)
+            {
+                BossAI(npc);
+                Sync(npc);
+            }
         }
-        else if (minionWhoAmIs.Contains(npc.whoAmI))
-        {
-            if (player == null) return;
+        else if (minionIds.Contains(npc.whoAmI))
+        {   
             MinionAI(npc);
+            Sync(npc);
         }
         else orig(npc);
     }
 
-    protected virtual void NPC_AI(NPC boss) { }
+    protected virtual void BossAI(NPC boss) { }
 
     protected virtual void MinionAI(NPC minion) { }
 
@@ -72,36 +76,43 @@ public class Boss(string name, int bossNpcId, int minionNpcId, int damageMultipl
     {
         orig(npc);
 
-        if (!npc.active) HandleBossRemoval(npc);
+        if (!npc.active) HandleDeath(npc);
     }
 
     private void NPC_checkDead(On.Terraria.NPC.orig_checkDead orig, NPC npc)
     {
-        if (npc.life <= 0) HandleBossRemoval(npc);
+        if (npc.life <= 0) HandleDeath(npc);
 
         orig(npc);
     }
 
-    private void HandleBossRemoval(NPC npc)
+    private void HandleDeath(NPC npc)
     {
-        if (npc.whoAmI == bossWhoAmI && alive)
+        if (npc.whoAmI == bossId && alive)
         {
             ClearMinions();
             alive = false;
-            bossWhoAmI = -1;
+            bossId = -1;
             OnDeath?.Invoke(this);
 
             TShock.Utils.Broadcast($"{name} has been defeated!", bossMessageColor);
         }
     }
 
-    protected virtual void ClearMinions() { }
+
+    private void ClearMinions()
+    {
+        foreach (int npcId in minionIds)
+        {
+            TSPlayer.Server.StrikeNPC(npcId, 1000000, 0, 0);
+        }
+    }
 
     private void ChatHelper_BroadcastChatMessage(On.Terraria.Chat.ChatHelper.orig_BroadcastChatMessage orig, NetworkText text, Color color, int excludedPlayer)
     {
         string msg = text.ToString();
 
-        foreach (string origName in origBossNames)
+        foreach (string origName in namesToReplace)
         {
             if (msg.Contains(origName))
             {
@@ -134,8 +145,8 @@ public class Boss(string name, int bossNpcId, int minionNpcId, int damageMultipl
     {
         alive = true;
         hasAnnounced = false;
-        int id = NPC.NewNPC(new EntitySource_Sync(), (int)pos.X + 1000, (int)pos.Y, bossNpcId);
-        bossWhoAmI = id;
+        int id = NPC.NewNPC(new EntitySource_Sync(), (int)pos.X + 1000, (int)pos.Y, bossNpcType);
+        bossId = id;
 
         TShock.Utils.Broadcast($"{name} has awoken!", bossMessageColor);
     }
@@ -219,5 +230,11 @@ public class Boss(string name, int bossNpcId, int minionNpcId, int damageMultipl
     protected void PlaySound(Vector2 pos, ushort id, int style, float volume, float pitch)
     {
         NetMessage.PlayNetSound(new NetSoundInfo(pos, id, style, volume, pitch), -1, -1);
+    }
+
+    private void Sync(NPC npc)
+    {
+        npc.netUpdate = true;
+        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npc.whoAmI);
     }
 }

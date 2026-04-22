@@ -9,9 +9,9 @@ namespace TrollariaBosses.Boss.Bosses;
 
 public class Boss1 : Boss
 {
-    public Boss1() : base("Boss1", NPCID.Retinazer, NPCID.DungeonGuardian, 1000, ItemID.SpicyPepper, ["The Twins", "Retinazer", "Skeletron Prime"]) { }
+    public Boss1() : base("Boss1", NPCID.Retinazer, ["The Twins", "Retinazer", "Skeletron Prime"]) { }
 
-    protected override void NPC_AI(NPC boss)
+    protected override void BossAI(NPC boss)
     {
         boss.aiStyle = -1;
         boss.defense = 800;
@@ -43,6 +43,9 @@ public class Boss1 : Boss
                 int minionId = NPC.NewNPC(new EntitySource_Sync(), (int)spawnPos.X, (int)spawnPos.Y, NPCID.DungeonGuardian);
                 NPC minion = Main.npc[minionId];
                 minion.life = 100;
+                minion.lifeMax = 100;
+
+                minionIds.Add(minionId);
             }
 
             if (boss.localAI[0] % 700 == 0)
@@ -69,7 +72,8 @@ public class Boss1 : Boss
             {
                 Vector2 spawnPos = VectorUtils.GetRandomVectorWithinRange(player.Center, 1000);
 
-                NPC.NewNPC(new EntitySource_Sync(), (int)spawnPos.X, (int)spawnPos.Y, NPCID.SkeletronPrime);
+                int minionId = NPC.NewNPC(new EntitySource_Sync(), (int)spawnPos.X, (int)spawnPos.Y, NPCID.SkeletronPrime);
+                minionIds.Add(minionId);
             }
 
             if (boss.localAI[0] % 600 == 0)
@@ -77,29 +81,10 @@ public class Boss1 : Boss
                 ProjectileBurst(boss, Vector2.Zero, ProjectileID.CultistBossIceMist, 75, 30, 10, 200, 500);
             }
         }
-
-        boss.netUpdate = true;
-        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, boss.whoAmI);
     }
 
     protected override void MinionAI(NPC minion)
     {
-        if (player == null) return;
-
         SetVelocity(minion, player, 14, 200);
-
-        minion.netUpdate = true;
-        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, minion.whoAmI);
-    }
-
-    protected override void ClearMinions()
-    {
-        for (int i = 0; i < Main.npc.Length; i++)
-        {
-            if (Main.npc[i].active && (Main.npc[i].type == NPCID.DungeonGuardian || Main.npc[i].type == NPCID.SkeletronPrime))
-            {
-                TSPlayer.Server.StrikeNPC(i, 1000000, 0, 0);
-            }
-        }
     }
 }

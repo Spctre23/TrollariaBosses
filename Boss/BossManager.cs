@@ -65,13 +65,13 @@ public class BossManager
     private void SpawnBoss(Func<Boss> factory, Vector2 pos)
     {
         Boss boss = factory();
-        boss.OnDeath += HandleDeath;
+        boss.OnDeath += HandleRemoval;
         boss.Initialize();
         boss.SpawnBoss(pos);
         activeBosses.Add(boss);
     }
 
-    private void HandleDeath(Boss boss)
+    private void HandleRemoval(Boss boss)
     {
         activeBosses.Remove(boss);
         Task.Run(async () =>
