@@ -1,5 +1,1 @@
-Various addons for the Trollaria terraria anarchy server.
-
-Features
-- Custom bosses
-- Chat command system
+Custom boss plugin for the Trollaria anarchy terraria server.
