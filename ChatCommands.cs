@@ -71,6 +71,9 @@ public class ChatCommands
     {
         args.Player.SendMessage("TrollariaBosses subcommands:" +
             "\n- help" +
+            "\n- reload" +
+            "\n- boss" +
+            "\n- legendarymode" +
             "\n- mechdusa", 255, 255, 0);
     }
 

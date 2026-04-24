@@ -8,19 +8,14 @@ namespace TrollariaBosses.Boss.Bosses;
 
 public class Boss2 : Boss
 {
-    public Boss2() : base("Boss2", NPCID.SkeletronPrime, ["Skeletron Prime", "Lunar Tower Solar"]) { }
+    public Boss2() : base("Boss2", NPCID.SkeletronPrime, 300, 300, [NPCID.LunarTowerSolar], ["Skeletron Prime", "Lunar Tower Solar"]) { }
 
     protected override void BossAI(NPC boss)
     {
-        boss.aiStyle = -1;
-        boss.defense = 300;
-
         int target = Player.FindClosest(boss.Center, boss.width, boss.height);
         player = Main.player[target];
 
         SetVelocity(boss, player, 16, 200);
-
-        boss.localAI[0]++;
 
         if (boss.life >= (boss.lifeMax / 2))
         {
@@ -39,8 +34,6 @@ public class Boss2 : Boss
 
     protected override void MinionAI(NPC minion)
     {
-        minion.aiStyle = -1;
-
         Vector2 direction = Vector2.Normalize(player.Center - minion.Center);
         minion.SimpleFlyMovement(direction, 20);
     }
