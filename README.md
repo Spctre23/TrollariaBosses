@@ -1,1 +1,1 @@
-Custom boss plugin for the Trollaria anarchy server for Terraria.
+Terraria custom boss plugin for the Trollaria anarchy server.

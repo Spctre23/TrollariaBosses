@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using TrollariaBosses.Boss;
 using TrollariaBosses.Boss.Bosses;
-using TShockAPI;
+
+namespace TrollariaBosses.Boss;
 
 public class BossManager
 {
@@ -44,7 +44,7 @@ public class BossManager
         {
             bool alreadyActive = activeBosses.Any(b => b.GetType() == factory().GetType());
 
-            if (!alreadyActive) 
+            if (!alreadyActive)
                 SpawnBoss(factory, self.Center);
         }
 

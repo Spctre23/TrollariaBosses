@@ -3,7 +3,6 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using TrollariaBosses.Helper;
-using TShockAPI;
 
 namespace TrollariaBosses.Boss.Bosses;
 

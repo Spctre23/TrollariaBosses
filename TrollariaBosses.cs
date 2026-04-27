@@ -1,4 +1,5 @@
 ﻿using TerrariaApi.Server;
+using TrollariaBosses.Boss;
 using TShockAPI;
 
 namespace TrollariaBosses
@@ -12,19 +13,15 @@ namespace TrollariaBosses
         public override Version Version => new(1, 0, 0);
         public static TrollariaBosses Instance { get; private set; }
 
-        public Configuration Config = Configuration.Reload();
-        public ChatCommands ChatCommands = new();
+        public ChatCommands commands = new();
         public BossManager bossManager = new();
 
         public override void Initialize()
         {
             Instance = this;
-            Handlers.InitializeHandlers(this);
             bossManager.Initialize();
-
-            ChatCommands.RegisterCommands();
-
-            Configuration.Reload();                            
+            commands.RegisterCommands();
+            
             TShock.Log.ConsoleInfo("======= TrollariaBosses Plugin Initialized =======");
         }
 
@@ -32,7 +29,6 @@ namespace TrollariaBosses
         {
             if (disposing) 
             {
-                Handlers.DisposeHandlers(this);
             }
         }
     }

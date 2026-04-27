@@ -58,7 +58,7 @@ public class Boss(string name, int bossNpcType, int defense, int damage, HashSet
             {
                 BossAI(npc);
                 HandleBossDamage(npc);
-                Sync(npc);
+                Sync(MessageID.SyncNPC, npc.whoAmI);
             }
         }
         else if (minionIds.Contains(npc.whoAmI))
@@ -71,7 +71,7 @@ public class Boss(string name, int bossNpcType, int defense, int damage, HashSet
             }
 
             MinionAI(npc);
-            Sync(npc);
+            Sync(MessageID.SyncNPC, npc.whoAmI);
         }
         else orig(npc);
     }
@@ -234,7 +234,8 @@ public class Boss(string name, int bossNpcType, int defense, int damage, HashSet
                 proj.hostile = false;
                 proj.npcProj = false;
                 projectileIds.Add(index);
-                NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, index);
+
+                Sync(MessageID.SyncProjectile, index);
             }
         }
     }
@@ -260,6 +261,8 @@ public class Boss(string name, int bossNpcType, int defense, int damage, HashSet
 
     protected async void ProjectileBurst(NPC npc, int type, int damage, float knockback, int repeatCount, int delay, int range)
     {
+        if (player == null) return;
+
         ProjectileBurst(npc, repeatCount, delay, () =>
         {
             Vector2 pos = VectorUtils.GetRandomVectorWithinRange(player.Center, range);
@@ -292,8 +295,8 @@ public class Boss(string name, int bossNpcType, int defense, int damage, HashSet
         NetMessage.PlayNetSound(new NetMessage.NetSoundInfo(pos, id, style, volume, pitch), -1, -1);
     }
 
-    private void Sync(NPC npc)
+    private void Sync(byte msgId, int id)
     {
-        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npc.whoAmI);
+        NetMessage.SendData(msgId, -1, -1, null, id);
     }
 }

@@ -7,14 +7,14 @@ public class ChatCommands
 {
     public void RegisterCommands()
     {
-        Commands.ChatCommands.Add(new Command("taddons.commands", HandleCommands, "ta"));
+        Commands.ChatCommands.Add(new Command("tb.commands", HandleCommands, "tb"));
     }
 
     private void HandleCommands(CommandArgs args)
     {
         if (args.Parameters.Count == 0)
         {
-            args.Player.SendMessage("Invalid syntax! Get subcommands with /taddons help.", 255, 0, 0);
+            args.Player.SendMessage("Invalid syntax! Get subcommands with /tb help.", 255, 0, 0);
             return;
         }
 
@@ -22,9 +22,6 @@ public class ChatCommands
         {
             case "help":
                 CommandHelp(args);
-                break;
-            case "reload":
-                ReloadConfig(args);
                 break;
             case "mechdusa":
                 SpawnMechdusa(args);
@@ -47,7 +44,7 @@ public class ChatCommands
         if (player == null) return;
 
         Main.getGoodWorld = true;
-        Terraria.NPC.SpawnMechQueen(player.Index);
+        NPC.SpawnMechQueen(player.Index);
         Main.getGoodWorld = false;
     }
 
@@ -71,15 +68,8 @@ public class ChatCommands
     {
         args.Player.SendMessage("TrollariaBosses subcommands:" +
             "\n- help" +
-            "\n- reload" +
             "\n- boss" +
             "\n- legendarymode" +
             "\n- mechdusa", 255, 255, 0);
-    }
-
-    private void ReloadConfig(CommandArgs args)
-    {
-        Configuration.Reload();
-        args.Player.SendMessage("Reloaded TrollariaBosses configuration.", 0, 255, 0);
     }
 }

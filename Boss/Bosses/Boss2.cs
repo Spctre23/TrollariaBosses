@@ -12,9 +12,6 @@ public class Boss2 : Boss
 
     protected override void BossAI(NPC boss)
     {
-        int target = Player.FindClosest(boss.Center, boss.width, boss.height);
-        player = Main.player[target];
-
         SetVelocity(boss, player, 16, 200);
 
         if (boss.life >= (boss.lifeMax / 2))
