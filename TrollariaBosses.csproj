@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TShock" Version="6.1.0" />
+    <PackageReference Include="TShock" Version="6.2.1" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;$(TargetDir)$(TargetFileName)&quot; &quot;C:\Users\%USERNAME%\Desktop\TSHOCK_SERVER\tshock\ServerPlugins&quot; /y&#xD;&#xA;taskkill /F /IM &quot;TShock.Server.exe&quot;" />
+    <Exec Command="copy &quot;$(TargetDir)$(TargetFileName)&quot; &quot;C:\Users\%25USERNAME%25\Desktop\Files\Servers\TSHOCK_SERVER\tshock\ServerPlugins&quot; /y&#xD;&#xA;taskkill /F /IM &quot;TShock.Server.exe&quot;" />
   </Target>
 
 </Project>

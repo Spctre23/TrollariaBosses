@@ -278,7 +278,7 @@ public class Boss(string name, int bossNpcType, int defense, int damage, HashSet
         for (int i = 0; i < Main.player.Length; i++)
         {
             Player plr = Main.player[i];
-            if (!plr.active || plr.dead) continue;
+            if (!plr.active || plr.dead || proj.owner == i) continue;
 
             if (proj.Hitbox.Intersects(plr.Hitbox))
             {
